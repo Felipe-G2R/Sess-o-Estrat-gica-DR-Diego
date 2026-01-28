@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react'
 export default function Home() {
   const [html, setHtml] = useState('')
   const containerRef = useRef(null)
-  const scriptsLoaded = useRef(false)
+  const initialized = useRef(false)
 
   useEffect(() => {
     fetch('/content.html')
@@ -21,35 +21,37 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if (html && containerRef.current && !scriptsLoaded.current) {
-      scriptsLoaded.current = true
-
-      const container = containerRef.current
-      const scripts = container.querySelectorAll('script')
-
-      scripts.forEach((oldScript) => {
-        const newScript = document.createElement('script')
-
-        Array.from(oldScript.attributes).forEach(attr => {
-          newScript.setAttribute(attr.name, attr.value)
-        })
-
-        if (oldScript.textContent) {
-          newScript.textContent = oldScript.textContent
-        }
-
-        if (oldScript.parentNode) {
-          oldScript.parentNode.replaceChild(newScript, oldScript)
-        } else {
-          document.body.appendChild(newScript)
-        }
-      })
+    if (html && containerRef.current && !initialized.current) {
+      initialized.current = true
 
       // Carregar script do formulário LeadConnector
       const formScript = document.createElement('script')
       formScript.src = 'https://link.msgsndr.com/js/form_embed.js'
       formScript.async = true
       document.body.appendChild(formScript)
+
+      // Configurar botões para abrir o modal
+      setTimeout(() => {
+        const buttons = document.querySelectorAll('a.elementor-button')
+        const formModal = document.getElementById('formModal')
+
+        if (formModal) {
+          buttons.forEach(btn => {
+            btn.onclick = function(e) {
+              e.preventDefault()
+              e.stopPropagation()
+              formModal.style.display = 'block'
+              return false
+            }
+          })
+
+          formModal.onclick = function(e) {
+            if (e.target === formModal) {
+              formModal.style.display = 'none'
+            }
+          }
+        }
+      }, 500)
     }
   }, [html])
 
