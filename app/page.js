@@ -1,61 +1,32 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useState, useCallback, Suspense, lazy } from 'react'
+import LoadingSkeleton from './components/LoadingSkeleton'
+
+// Lazy load components for better performance
+const ContentLoader = lazy(() => import('./components/ContentLoader'))
+const FormModal = lazy(() => import('./components/FormModal'))
 
 export default function Home() {
-  const [html, setHtml] = useState('')
-  const containerRef = useRef(null)
-  const initialized = useRef(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  useEffect(() => {
-    fetch('/content.html')
-      .then(res => res.text())
-      .then(data => {
-        const bodyMatch = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)
-        if (bodyMatch) {
-          setHtml(bodyMatch[1])
-        } else {
-          setHtml(data)
-        }
-      })
+  const openModal = useCallback(() => {
+    setIsModalOpen(true)
   }, [])
 
-  useEffect(() => {
-    if (html && containerRef.current && !initialized.current) {
-      initialized.current = true
-
-      // Carregar script do formulário LeadConnector
-      const formScript = document.createElement('script')
-      formScript.src = 'https://link.msgsndr.com/js/form_embed.js'
-      formScript.async = true
-      document.body.appendChild(formScript)
-
-      // Configurar botões para abrir o modal
-      setTimeout(() => {
-        const buttons = document.querySelectorAll('a.elementor-button')
-        const formModal = document.getElementById('formModal')
-
-        if (formModal) {
-          buttons.forEach(btn => {
-            btn.onclick = function(e) {
-              e.preventDefault()
-              e.stopPropagation()
-              formModal.style.display = 'block'
-              return false
-            }
-          })
-
-          formModal.onclick = function(e) {
-            if (e.target === formModal) {
-              formModal.style.display = 'none'
-            }
-          }
-        }
-      }, 500)
-    }
-  }, [html])
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false)
+  }, [])
 
   return (
-    <div ref={containerRef} dangerouslySetInnerHTML={{ __html: html }} />
+    <>
+      <Suspense fallback={<LoadingSkeleton />}>
+        <ContentLoader onButtonClick={openModal} />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <FormModal isOpen={isModalOpen} onClose={closeModal} />
+      </Suspense>
+    </>
   )
 }
