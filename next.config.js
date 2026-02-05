@@ -30,12 +30,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://link.msgsndr.com https://*.google.com https://*.googletagmanager.com https://*.gstatic.com https://va.vercel-scripts.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://link.msgsndr.com https://*.google.com https://*.googletagmanager.com https://*.gstatic.com https://va.vercel-scripts.com https://connect.facebook.net https://*.facebook.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com data:",
               "img-src 'self' data: blob: https:",
               "frame-src 'self' https://api.leadconnectorhq.com https://*.leadconnectorhq.com",
-              "connect-src 'self' https://api.leadconnectorhq.com https://*.leadconnectorhq.com https://*.msgsndr.com https://va.vercel-scripts.com https://*.vercel-analytics.com",
+              "connect-src 'self' https://api.leadconnectorhq.com https://*.leadconnectorhq.com https://*.msgsndr.com https://va.vercel-scripts.com https://*.vercel-analytics.com https://*.facebook.com https://*.facebook.net https://*.run.app https://*.conversionsapigateway.com",
             ].join('; '),
           },
           {

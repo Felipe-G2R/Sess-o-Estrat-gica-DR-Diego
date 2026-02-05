@@ -1,5 +1,7 @@
 import { Analytics } from "@vercel/analytics/next"
 import './globals.css'
+import UTMTracker from './components/UTMTracker'
+import FacebookPixel from './components/FacebookPixel'
 
 export const metadata = {
   title: 'Sessão Estratégica - NextLevel Formed',
@@ -47,6 +49,8 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        <FacebookPixel />
+        <UTMTracker />
         {children}
         <Analytics />
       </body>
