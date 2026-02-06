@@ -1,10 +1,33 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
+
+const FORM_BASE_URL = 'https://api.leadconnectorhq.com/widget/form/tQoEPlFkFUlyAvfpAHqZ'
+
+const TRACKING_PARAMS = [
+  'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+  'hsa_acc', 'hsa_cam', 'hsa_grp', 'hsa_ad', 'hsa_src', 'hsa_net', 'hsa_ver'
+]
 
 export default function FormModal({ isOpen, onClose }) {
   const [iframeLoaded, setIframeLoaded] = useState(false)
   const modalRef = useRef(null)
+
+  // Constrói a URL do iframe com os parâmetros UTM/HSA do localStorage
+  const iframeSrc = useMemo(() => {
+    if (typeof window === 'undefined') return FORM_BASE_URL
+
+    const params = new URLSearchParams()
+    TRACKING_PARAMS.forEach((param) => {
+      const value = localStorage.getItem(param)
+      if (value) {
+        params.set(param, value)
+      }
+    })
+
+    const queryString = params.toString()
+    return queryString ? `${FORM_BASE_URL}?${queryString}` : FORM_BASE_URL
+  }, [isOpen])
 
   useEffect(() => {
     if (isOpen) {
@@ -90,7 +113,7 @@ export default function FormModal({ isOpen, onClose }) {
         )}
 
         <iframe
-          src="https://api.leadconnectorhq.com/widget/form/tQoEPlFkFUlyAvfpAHqZ"
+          src={iframeSrc}
           style={{
             width: '100%',
             height: iframeLoaded ? '1216px' : '0',

@@ -15,29 +15,32 @@ export default function UTMTracker() {
       return decodeURIComponent(results[2].replace(/\+/g, ' '))
     }
 
-    // Lista das UTMs
-    const utms = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
+    // Lista das UTMs + parâmetros HSA do Facebook Ads
+    const trackingParams = [
+      'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+      'hsa_acc', 'hsa_cam', 'hsa_grp', 'hsa_ad', 'hsa_src', 'hsa_net', 'hsa_ver'
+    ]
 
-    // Captura e armazena UTMs
-    utms.forEach((utm) => {
-      const value = getParameterByName(utm)
+    // Captura e armazena todos os parâmetros de rastreio
+    trackingParams.forEach((param) => {
+      const value = getParameterByName(param)
       if (value) {
-        localStorage.setItem(utm, value)
+        localStorage.setItem(param, value)
       }
 
       // Preenche campos ocultos se existirem
-      const input = document.querySelector(`input[name='${utm}']`)
+      const input = document.querySelector(`input[name='${param}']`)
       if (input) {
-        input.value = localStorage.getItem(utm) || ''
+        input.value = localStorage.getItem(param) || ''
       }
     })
 
     // Também preenche campos de formulários carregados dinamicamente
     const observer = new MutationObserver(() => {
-      utms.forEach((utm) => {
-        const input = document.querySelector(`input[name='${utm}']`)
+      trackingParams.forEach((param) => {
+        const input = document.querySelector(`input[name='${param}']`)
         if (input && !input.value) {
-          input.value = localStorage.getItem(utm) || ''
+          input.value = localStorage.getItem(param) || ''
         }
       })
     })
