@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, Suspense, lazy } from 'react'
+import Script from 'next/script'
 import LoadingSkeleton from './components/LoadingSkeleton'
 
 // Lazy load components for better performance
@@ -27,6 +28,8 @@ export default function Home() {
       <Suspense fallback={null}>
         <FormModal isOpen={isModalOpen} onClose={closeModal} />
       </Suspense>
+
+      <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
     </>
   )
 }
